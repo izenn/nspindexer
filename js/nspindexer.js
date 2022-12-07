@@ -954,7 +954,7 @@ function modalRomInfo(path,romData){
 			}else{
 				$.alert({
 					title: 'Filename is correct',
-					content: 'The current filename matches the expected filename.',
+					content: 'The current filename matches the expected filename.'
 				});	
 			}
 			$(me).html("<i class=\"bi-calculator\"></i>");
