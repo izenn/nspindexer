@@ -4,7 +4,7 @@
  * You should copy this file to 'config.php' to customize it
  */
 
-ini_set('memory_limit', getenv("PHP_MEMORY_LIMIT")?:'256M'); /* To prevent low memory errors anyway it may fail if php.ini have a limit set. if so edit php.ini with memory limit >= 256M */
+ini_set('memory_limit', getenv("PHP_MEMORY_LIMIT")?:'512M'); /* To prevent low memory errors anyway it may fail if php.ini have a limit set. if so edit php.ini with memory limit >= 512M */
 
 $gameDir = getenv("NSPINDEXER_GAMES_DIR")?:"/var/www/html/switch/data/games"; /* Absolute Files Path, no trailing slash */
 $contentUrl = getenv("NSPINDEXER_CONTENT_URL")?:"/switch/data/games"; /* Files URL, no trailing slash */
