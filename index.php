@@ -349,8 +349,8 @@ function outputTitles($forceUpdate = false)
 						"path" => $update["path"],
                         "date" => $updateDate,
 						"size_real" => getFileSize($gameDir . DIRECTORY_SEPARATOR . $update["path"])
-					}
-                );
+                    );
+                }
             }
             $game['updates'] = $updates;
             $dlcs = array();
