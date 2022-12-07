@@ -542,3 +542,12 @@ function XCIUpdatePartition($xcifilename,$tarfilename){
 	}
 	die();
 }
+
+function logMessage($message)
+{
+	//logMessage("Sample usage");
+    $stdout = fopen('php://stdout', 'w');
+    $now = new DateTime();
+    fwrite($stdout, "[{$now->format('Y-m-d_H:i:s')}] $message\n");
+    fclose($stdout);
+}
