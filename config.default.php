@@ -4,15 +4,15 @@
  * You should copy this file to 'config.php' to customize it
  */
 
-ini_set('memory_limit', '256M'); /* To prevent low memory errors anyway it may fail if php.ini have a limit set. if so edit php.ini with memory limit >= 256M */
+ini_set('memory_limit', getenv("PHP_MEMORY_LIMIT")?:'256M'); /* To prevent low memory errors anyway it may fail if php.ini have a limit set. if so edit php.ini with memory limit >= 256M */
 
-$gameDir = "/var/www/html/switch/data/games"; /* Absolute Files Path, no trailing slash */
-$contentUrl = "/switch/data/games"; /* Files URL, no trailing slash */
-$allowedExtensions = array('nsp', 'xci', 'nsz', 'xcz');
-$enableNetInstall = true; /* Enable Net Install feature */
-$enableRename = true; /* Enable Rename feature */
-$switchIp = "192.168.1.50"; /* Switch IP address for Net Install */
-$netInstallSrc = false; /* Set to e.g. '192.168.0.1:80' to override source address for Net Install */
+$gameDir = getenv("NSPINDEXER_GAMES_DIR")?:"/var/www/html/switch/data/games"; /* Absolute Files Path, no trailing slash */
+$contentUrl = getenv("NSPINDEXER_CONTENT_URL")?:"/switch/data/games"; /* Files URL, no trailing slash */
+$allowedExtensions = explode(",", getenv("NSPINDEXER_EXTENSIONS")?:'nsp,xci,nsz,xcz');
+$enableNetInstall = getenv("NSPINDEXER_ENABLE_NETINSTALL")?:true; /* Enable Net Install feature */
+$enableRename = getenv("NSPINDEXER_ENABLE_RENAME")?:true; /* Enable Rename feature */
+$switchIp = getenv("NSPINDEXER_SWITCH_IP")?:"192.168.1.50"; /* Switch IP address for Net Install */
+$netInstallSrc = getenv("NSPINDEXER_NETINSTALL_SRC")?:false; /* Set to e.g. '192.168.0.1:80' to override source address for Net Install */
 $showWarnings = true; /* Show configuration warnings on page load */
 
 /* VARS FOR DOCKER USE */
