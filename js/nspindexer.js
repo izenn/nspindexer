@@ -953,8 +953,8 @@ function modalRomInfo(path,romData){
 				showAnalyzeModal(data);
 			}else{
 				$.alert({
-					title: 'Alert!',
-					content: data.msg,
+					title: 'Filename is correct',
+					content: 'The current filename matches the expected filename.',
 				});	
 			}
 			$(me).html("<i class=\"bi-calculator\"></i>");
