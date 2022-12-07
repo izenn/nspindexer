@@ -27,4 +27,4 @@ $contentUrl = getenv('NSPINDEXER_WEBPATH');
  * Advanced Section (use only if you know what you are doing
  */
 
-$keyFile = ""; /* Path to 'prod.keys', must be readable by the webserver/php, but KEEP IT SECURE via .htaccess or similar */
+$keyFile = getenv("NSPINDEXER_KEYFILE")?:""; /* Path to 'prod.keys', must be readable by the webserver/php, but KEEP IT SECURE via .htaccess or similar */
