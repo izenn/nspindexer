@@ -15,14 +15,6 @@ $switchIp = getenv("NSPINDEXER_SWITCH_IP")?:"192.168.1.50"; /* Switch IP address
 $netInstallSrc = getenv("NSPINDEXER_NETINSTALL_SRC")?:false; /* Set to e.g. '192.168.0.1:80' to override source address for Net Install */
 $showWarnings = true; /* Show configuration warnings on page load */
 
-/* VARS FOR DOCKER USE */
-if(getenv('NSPINDEXER_ABSPATH')){
-$gameDir = getenv('NSPINDEXER_ABSPATH');
-}
-if(getenv('NSPINDEXER_WEBPATH')){
-$contentUrl = getenv('NSPINDEXER_WEBPATH');
-}
-
 /*
  * Advanced Section (use only if you know what you are doing
  */
