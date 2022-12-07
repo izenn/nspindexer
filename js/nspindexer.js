@@ -349,8 +349,8 @@ function enableAnalyze() {
                 }
             } else {
 				$.alert({
-					title: 'Alert!',
-					content: data.msg,
+					title: 'Error!',
+					content: 'Unable to rename. Try refreshing the list.'
 				});
             }
         }).done(function () {
