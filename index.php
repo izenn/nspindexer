@@ -336,12 +336,10 @@ function outputTitles($forceUpdate = false)
             );
             $updates = array();
             foreach ($title["updates"] as $updateVersion => $update) {
-                if (! array_key_exists(strtolower($titleId), $versionsJson)) {
-                    //logMessage("[WARN] Failed to find entry for {$titlesJson[$titleId]['name']} [$titleId] in Tinfoil versions.json.");
+                if (! array_key_exists($titleId, $versionsJson)) {
                     $updateDate = "unknown";
                 }
-                else if (! array_key_exists($updateVersion, $versionsJson[strtolower($titleId)])) {
-                    //logMessage("[WARN] Failed to find release date for {$titlesJson[$titleId]['name']} [$titleId] v$updateVersion in Tinfoil versions.json.");
+                else if (! array_key_exists($updateVersion, $versionsJson[$titleId])) {
                     $updateDate = "unknown";
                 }
 				else {
