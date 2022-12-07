@@ -452,7 +452,7 @@ function createCard(titleId, title) {
     $.each(title.dlc, function (dlcId, dlc) {
         listDlc += tmpl(dlcTemplate, {
             titleId: dlcId,
-            name: dlc.name,
+            name: truncateString(dlc.name, 75),
             url: contentUrl + '/' + dlc.path,
             path: encodeURI(dlc.path),
             size: bytesToHuman(dlc.size_real),
@@ -1137,3 +1137,11 @@ $("#modalFileUploadAbort").on('click', function () {
         return data ? fn(data) : fn;
     };
 })();
+
+//by Dylan Attal, https://medium.com/@DylanAttal/truncate-a-string-in-javascript-41f33171d5a8
+function truncateString(str, num) {
+  if (str.length <= num) {
+    return str
+  }
+  return str.slice(0, num) + '...'
+}
