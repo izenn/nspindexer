@@ -146,7 +146,7 @@ function matchTitleIds($files)
     foreach ($files as $key => $file) {
 
         // check if we have a Base TitleId (0100XXXXXXXXY000, with Y being an even number)
-        if (preg_match('/(?<=\[)' . REGEX_TITLEID_BASE . '(?=])/i', $file, $titleIdMatches) === 1) {
+        if (preg_match('/(?<=\[)' . REGEX_TITLEID_BASE . '(?=])/', strtoupper($file), $titleIdMatches) === 1) {
             $titleId = strtoupper($titleIdMatches[0]);
             $titles[$titleId] = array(
                 "path" => $file,
@@ -160,7 +160,7 @@ function matchTitleIds($files)
     $unmatched = [];
     // second round, match Updates and DLC to Base TitleIds
     foreach ($files as $key => $file) {
-        if (preg_match('/(?<=\[)' . REGEX_TITLEID . '(?=])/i', $file, $titleIdMatches) === 0) {
+        if (preg_match('/(?<=\[)' . REGEX_TITLEID . '(?=])/', strtoupper($file), $titleIdMatches) === 0) {
             // file does not have any kind of TitleId, skip further checks
             array_push($unmatched, $file);
             continue;
