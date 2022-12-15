@@ -116,6 +116,7 @@ class XCI
 					$cnmtncafile->getPFS0Enc($cnmtncafile->pfs0idx);
 					$this->cnmtncafile = $cnmtncafile;
 				}
+				$this->titleIds[$cnmtncafile->pfs0->cnmt->id] = $cnmtncafile->pfs0->cnmt->version;
             }
             if ($ncafile->contentType == 2) {
 				$ncafile->getFs();
@@ -130,9 +131,10 @@ class XCI
     function getInfo()
     {
         $infoobj = new stdClass();
-        $infoobj->langs = $this->ncafile->romfs->nacp->langs;$infoobj->version = (int)$this->cnmtncafile->pfs0->cnmt->version;
+		$infoobj->langs = $this->ncafile->romfs->nacp->langs;
         $infoobj->humanVersion = $this->ncafile->romfs->nacp->version;
-        $infoobj->titleId = $this->cnmtncafile->pfs0->cnmt->id;
+		ksort($this->titleIds, 4 | 5);
+		$infoobj->titleIds = $this->titleIds;
         $infoobj->mediaType = ord($this->cnmtncafile->pfs0->cnmt->mediaType);
         $infoobj->otherId = $this->cnmtncafile->pfs0->cnmt->otherId;
         $infoobj->sdk = $this->ncafile->sdkArray[3] . "." . $this->ncafile->sdkArray[2] . "." . $this->ncafile->sdkArray[1];

@@ -129,6 +129,7 @@ function romInfo($path)
 		$haveupdatepartition = $xci->getUpdatePartition();
         $ret = $xci->getInfo();
         $ret->fileType = $fileType;
+		foreach(array_slice($ret->titleIds, 0, 1, true) as $ret->titleId => $ret->version);
         return $ret;
     }
     return false;
@@ -160,7 +161,6 @@ function downloadromFileContents($romfilename,$romfile,$type,$downfileidx){
 		if($ret == false){
 			return false;
 		}
-		
 		
 		if($type == "romfs"){
 			$ncafile->getRomfs($ncafile->romfsidx);
@@ -247,7 +247,7 @@ function ncaFileAnalyze($romfilename,$romfile){
 		if($fileidx == -1){
 			die();
 		}
-		
+
 		fseek($xci->fh, $xci->securepartition->rawdataoffset + $xci->securepartition->file_array[$fileidx]->fileoffset);
 		$ncafile = new NCA($xci->fh, $xci->securepartition->rawdataoffset + $xci->securepartition->file_array[$fileidx]->fileoffset, $xci->securepartition->file_array[$fileidx]->filesize, $keyList,null);
 		return $ncafile->Analyze();	
