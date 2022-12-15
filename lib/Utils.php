@@ -129,6 +129,9 @@ function romInfo($path)
 		$haveupdatepartition = $xci->getUpdatePartition();
         $ret = $xci->getInfo();
         $ret->fileType = $fileType;
+		if(preg_match('/800$/', $ret->titleId)) {
+			$ret->titleId = $ret->otherId;
+		}
         return $ret;
     }
     return false;
