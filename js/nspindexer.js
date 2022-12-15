@@ -463,9 +463,7 @@ function createCard(titleId, title) {
     var updateClass = 'bg-danger';
     if (title.latest_version === 0 || title.latest_version in title.updates) {
         updateClass = 'bg-success';
-    } else if (Number(title.path.split('[').pop().split(']')[0].substring(1)) === title.latest_version) {
-        updateClass = 'bg-success';
-	}
+    }
     var countUpdates = Object.keys(title.updates).length;
     var countDlc = Object.keys(title.dlc).length;
     var cardTemplate = $('#cardTemplate');
@@ -822,10 +820,8 @@ function modalRomInfo(path,romData){
 	var myType = "";
 	if(romData.mediaType == 128){
 		myType = "Base Game";
-	}else if(romData.mediaType == 129 && romData.fileType == "XCI"){
-		myType = "Updated Base Game";
 	}else if(romData.mediaType == 129){
-	    myType = "Update";
+		myType = "Update";
 	}else if(romData.mediaType == 130){
 		myType = "DLC";
 	}
