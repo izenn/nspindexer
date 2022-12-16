@@ -320,7 +320,7 @@ function outputTitles($forceUpdate = false)
                     $latestVersionDate = $versionsJson[strtoupper($titleId)][$latestVersion];
                 }
             }
-			
+
             $game = array(
                 "path" => $title["path"],
                 "fileType" => guessFileType($gameDir . DIRECTORY_SEPARATOR  . $title["path"]),
@@ -351,6 +351,18 @@ function outputTitles($forceUpdate = false)
                 }
             }
             $game['updates'] = $updates;
+
+			if ($game["fileType"] == "XCI" && preg_match('/[\[]v[1-9]/', $game["path"])) {
+				$updatedXCI = romInfo($gameDir . DIRECTORY_SEPARATOR . $game['path']);
+				$xciTitles = $updatedXCI->titleInfo;
+				unset($xciTitles[strtolower($titleId)]);
+				unset($xciTitles[strtolower($updateTitleId)]);
+				$dlcTitles = array_keys($xciTitles);
+				foreach ($dlcTitles as $dlc) {
+					$title["dlc"][$dlc]["path"] = $game["path"];
+				}
+			}
+
             $dlcs = array();
             foreach ($title["dlc"] as $dlcId => $d) {
                 $dlcs[strtoupper($dlcId)] = array(

@@ -463,7 +463,9 @@ function createCard(titleId, title) {
     var updateClass = 'bg-danger';
     if (title.latest_version === 0 || title.latest_version in title.updates) {
         updateClass = 'bg-success';
-    }
+    } else if (Number(title.path.split('[').pop().split(']')[0].substring(1)) === title.latest_version) {
+        updateClass = 'bg-success';
+	}
     var countUpdates = Object.keys(title.updates).length;
     var countDlc = Object.keys(title.dlc).length;
     var cardTemplate = $('#cardTemplate');
@@ -824,6 +826,13 @@ function modalRomInfo(path,romData){
 		myType = "Update";
 	}else if(romData.mediaType == 130){
 		myType = "DLC";
+	}
+
+	if(romData.fileType == "XCI"){
+	    xciUpdate = romData.titleId.replace(/000$/, "800");
+	    if(xciUpdate in romData.titleInfo){
+	        romData.version = romData.titleInfo[xciUpdate]["titleVersion"];
+	    }
 	}
 	
 	var filelisttmpt = [];

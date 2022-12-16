@@ -126,13 +126,20 @@ function romInfo($path)
         $xci = new XCI($filePath, $keyList);
         $xci->getMasterPartitions();
         $xci->getSecurePartition();
-		$haveupdatepartition = $xci->getUpdatePartition();
+	    $haveupdatepartition = $xci->getUpdatePartition();
         $ret = $xci->getInfo();
         $ret->fileType = $fileType;
-		foreach(array_slice($ret->titleIds, 0, 1, true) as $ret->titleId => $ret->version);
+	    foreach(array_slice($ret->titleInfo, 0, 1, true) as $ret->titleId => $ret->xciInfo);
+	    $ret->mediaType = $ret->xciInfo["mediaType"];
+	    $updateId = substr_replace($ret->titleId, "800", -3);
+	    if (array_key_exists($updateId, $ret->titleInfo)) {
+		    $ret->version = $ret->titleInfo[$updateId]["titleVersion"];
+	    } else {
+	        $ret->version = $ret->xciInfo["titleVersion"];
+	    }
         return $ret;
     }
-    return false;
+        return false;
 }
 
 function downloadromFileContents($romfilename,$romfile,$type,$downfileidx){
