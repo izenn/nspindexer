@@ -146,7 +146,7 @@ function matchTitleIds($files)
     foreach ($files as $key => $file) {
 
         // check if we have a Base TitleId (0100XXXXXXXXY000, with Y being an even number)
-        if (preg_match('/(?<=\[)' . REGEX_TITLEID_BASE . '(?=])/i', $file, $titleIdMatches) === 1) {
+        if (preg_match('/(?<=\[)' . REGEX_TITLEID_BASE . '(?=])/', strtoupper($file), $titleIdMatches) === 1) {
             $titleId = strtoupper($titleIdMatches[0]);
             $titles[$titleId] = array(
                 "path" => $file,
@@ -160,7 +160,7 @@ function matchTitleIds($files)
     $unmatched = [];
     // second round, match Updates and DLC to Base TitleIds
     foreach ($files as $key => $file) {
-        if (preg_match('/(?<=\[)' . REGEX_TITLEID . '(?=])/i', $file, $titleIdMatches) === 0) {
+        if (preg_match('/(?<=\[)' . REGEX_TITLEID . '(?=])/', strtoupper($file), $titleIdMatches) === 0) {
             // file does not have any kind of TitleId, skip further checks
             array_push($unmatched, $file);
             continue;
@@ -308,22 +308,24 @@ function outputTitles($forceUpdate = false)
 				
             }
 			
-            $realeaseDate = DateTime::createFromFormat('Ymd', sprintf("%s", $titlesJson[strtoupper($titleId)]["releaseDate"]));
-            $latestVersionDate = "";
-			if($realeaseDate instanceof DateTime){
-				$latestVersionDate = $realeaseDate->format('Y-m-d');
-			}
-            if (array_key_exists(strtoupper(strtoupper($titleId)), $versionsJson)) {
-                $latestVersionDate = $versionsJson[strtoupper($titleId)][$latestVersion];
+            if (! $titlesJson[$titleId]["releaseDate"]) {
+                $latestVersionDate = "";
             }
-			
-			
-			
+            else {
+                $releaseDate = DateTime::createFromFormat('Ymd', sprintf("%s", $titlesJson[strtoupper($titleId)]["releaseDate"]));
+                if($releaseDate instanceof DateTime){
+                    $latestVersionDate = $releaseDate->format('Y-m-d');
+                }
+                if (array_key_exists(strtoupper(strtoupper($titleId)), $versionsJson)) {
+                    $latestVersionDate = $versionsJson[strtoupper($titleId)][$latestVersion];
+                }
+            }
+
             $game = array(
                 "path" => $title["path"],
                 "fileType" => guessFileType($gameDir . DIRECTORY_SEPARATOR  . $title["path"]),
-                "name" => $titlesJson[strtoupper($titleId)]["name"],
-                "thumb" => $titlesJson[strtoupper($titleId)]["iconUrl"],
+                "name" => $titlesJson[$titleId]["name"]?:$title["path"],
+                "thumb" => $titlesJson[$titleId]["iconUrl"]?:"/img/questionmark.png",
                 "banner" => $titlesJson[strtoupper($titleId)]["bannerUrl"],
                 "intro" => $titlesJson[strtoupper($titleId)]["intro"],
 				"latest_version" => $latestVersion,
@@ -334,13 +336,33 @@ function outputTitles($forceUpdate = false)
             );
             $updates = array();
             foreach ($title["updates"] as $updateVersion => $update) {
-                $updates[(int)$updateVersion] = array(
-                    "path" => $update["path"],
-                    "date" => $versionsJson[strtoupper($titleId)][$updateVersion],
-                    "size_real" => getFileSize($gameDir . DIRECTORY_SEPARATOR . $update["path"])
-                );
+                if (! array_key_exists($titleId, $versionsJson)) {
+                    $updateDate = "unknown";
+                }
+                else if (! array_key_exists($updateVersion, $versionsJson[$titleId])) {
+                    $updateDate = "unknown";
+                }
+				else {
+					$updates[(int)$updateVersion] = array(
+						"path" => $update["path"],
+                        "date" => $updateDate,
+						"size_real" => getFileSize($gameDir . DIRECTORY_SEPARATOR . $update["path"])
+                    );
+                }
             }
             $game['updates'] = $updates;
+
+			if ($game["fileType"] == "XCI" && preg_match('/[\[]v[1-9]/', $game["path"])) {
+				$updatedXCI = romInfo($gameDir . DIRECTORY_SEPARATOR . $game['path']);
+				$xciTitles = $updatedXCI->titleInfo;
+				unset($xciTitles[strtolower($titleId)]);
+				unset($xciTitles[strtolower($updateTitleId)]);
+				$dlcTitles = array_keys($xciTitles);
+				foreach ($dlcTitles as $dlc) {
+					$title["dlc"][$dlc]["path"] = $game["path"];
+				}
+			}
+
             $dlcs = array();
             foreach ($title["dlc"] as $dlcId => $d) {
                 $dlcs[strtoupper($dlcId)] = array(

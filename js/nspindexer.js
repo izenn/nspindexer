@@ -195,6 +195,7 @@ function confirmRename(oldName, newName) {
                 text: 'Yes',
                 btnClass: 'btn-success',
                 action: function (btn) {
+					oldName = encodeURIComponent(oldName);
                     $.getJSON("index.php?rename=" + oldName, function (data) {
                         if (data.int === 0) {
                             $('button[data-path="' + oldName + '"]').parent().parent().remove();
@@ -348,8 +349,8 @@ function enableAnalyze() {
                 }
             } else {
 				$.alert({
-					title: 'Alert!',
-					content: data.msg,
+					title: 'Error!',
+					content: 'Unable to rename. Try refreshing the list.'
 				});
             }
         }).done(function () {
@@ -451,7 +452,7 @@ function createCard(titleId, title) {
     $.each(title.dlc, function (dlcId, dlc) {
         listDlc += tmpl(dlcTemplate, {
             titleId: dlcId,
-            name: dlc.name,
+            name: truncateString(dlc.name, 75),
             url: contentUrl + '/' + dlc.path,
             path: encodeURI(dlc.path),
             size: bytesToHuman(dlc.size_real),
@@ -462,7 +463,9 @@ function createCard(titleId, title) {
     var updateClass = 'bg-danger';
     if (title.latest_version === 0 || title.latest_version in title.updates) {
         updateClass = 'bg-success';
-    }
+    } else if (Number(title.path.split('[').pop().split(']')[0].substring(1)) === title.latest_version) {
+        updateClass = 'bg-success';
+	}
     var countUpdates = Object.keys(title.updates).length;
     var countDlc = Object.keys(title.dlc).length;
     var cardTemplate = $('#cardTemplate');
@@ -824,6 +827,13 @@ function modalRomInfo(path,romData){
 	}else if(romData.mediaType == 130){
 		myType = "DLC";
 	}
+
+	if(romData.fileType == "XCI"){
+	    xciUpdate = romData.titleId.replace(/000$/, "800");
+	    if(xciUpdate in romData.titleInfo){
+	        romData.version = romData.titleInfo[xciUpdate]["titleVersion"];
+	    }
+	}
 	
 	var filelisttmpt = [];
 	console.log(zstdSupport);
@@ -952,8 +962,8 @@ function modalRomInfo(path,romData){
 				showAnalyzeModal(data);
 			}else{
 				$.alert({
-					title: 'Alert!',
-					content: data.msg,
+					title: 'Filename is correct',
+					content: 'The current filename matches the expected filename.'
 				});	
 			}
 			$(me).html("<i class=\"bi-calculator\"></i>");
@@ -1136,3 +1146,11 @@ $("#modalFileUploadAbort").on('click', function () {
         return data ? fn(data) : fn;
     };
 })();
+
+//by Dylan Attal, https://medium.com/@DylanAttal/truncate-a-string-in-javascript-41f33171d5a8
+function truncateString(str, num) {
+  if (str.length <= num) {
+    return str
+  }
+  return str.slice(0, num) + '...'
+}

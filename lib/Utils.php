@@ -126,12 +126,20 @@ function romInfo($path)
         $xci = new XCI($filePath, $keyList);
         $xci->getMasterPartitions();
         $xci->getSecurePartition();
-		$haveupdatepartition = $xci->getUpdatePartition();
+	    $haveupdatepartition = $xci->getUpdatePartition();
         $ret = $xci->getInfo();
         $ret->fileType = $fileType;
+	    foreach(array_slice($ret->titleInfo, 0, 1, true) as $ret->titleId => $ret->xciInfo);
+	    $ret->mediaType = $ret->xciInfo["mediaType"];
+	    $updateId = substr_replace($ret->titleId, "800", -3);
+	    if (array_key_exists($updateId, $ret->titleInfo)) {
+		    $ret->version = $ret->titleInfo[$updateId]["titleVersion"];
+	    } else {
+	        $ret->version = $ret->xciInfo["titleVersion"];
+	    }
         return $ret;
     }
-    return false;
+        return false;
 }
 
 function downloadromFileContents($romfilename,$romfile,$type,$downfileidx){
@@ -160,7 +168,6 @@ function downloadromFileContents($romfilename,$romfile,$type,$downfileidx){
 		if($ret == false){
 			return false;
 		}
-		
 		
 		if($type == "romfs"){
 			$ncafile->getRomfs($ncafile->romfsidx);
@@ -247,7 +254,7 @@ function ncaFileAnalyze($romfilename,$romfile){
 		if($fileidx == -1){
 			die();
 		}
-		
+
 		fseek($xci->fh, $xci->securepartition->rawdataoffset + $xci->securepartition->file_array[$fileidx]->fileoffset);
 		$ncafile = new NCA($xci->fh, $xci->securepartition->rawdataoffset + $xci->securepartition->file_array[$fileidx]->fileoffset, $xci->securepartition->file_array[$fileidx]->filesize, $keyList,null);
 		return $ncafile->Analyze();	
@@ -485,14 +492,14 @@ function renameRom($oldName, $preview = true)
         }
         $baseTitleName = "";
         if (array_key_exists($baseTitleId, $titlesJson)) {
-            $baseTitleName = preg_replace("/[^[:alnum:][:space:]_-]/u", '', $titlesJson[$baseTitleId]['name']);
+            $baseTitleName = preg_replace("/[^[:alnum:][:space:]_+-]/u", '', $titlesJson[$baseTitleId]['name']);
         } else {
             $error = true;
         }
         $dlcNameNice = "";
         if ($titleIdType == 'dlc') {
             if (array_key_exists($titleId, $titlesJson)) {
-                $dlcName = preg_replace("/[^[:alnum:][:space:]_-]/u", '', $titlesJson[$titleId]['name']);
+                $dlcName = preg_replace("/[^[:alnum:][:space:]_+-]/u", '', $titlesJson[$titleId]['name']);
                 $dlcNameNice = "(" . trim(str_replace($baseTitleName, '', $dlcName)) . ") ";
             } else {
                 $error = true;
@@ -541,4 +548,13 @@ function XCIUpdatePartition($xcifilename,$tarfilename){
 		$tar->AddFile($xci->updatepartition->filesList[$i]->name,$xci->fh,$xci->updatepartition->filesList[$i]->offset,$xci->updatepartition->filesList[$i]->filesize);
 	}
 	die();
+}
+
+function logMessage($message)
+{
+	//logMessage("Sample usage");
+    $stdout = fopen('php://stdout', 'w');
+    $now = new DateTime();
+    fwrite($stdout, "[{$now->format('Y-m-d_H:i:s')}] $message\n");
+    fclose($stdout);
 }
